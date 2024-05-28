@@ -1,5 +1,7 @@
 import Html
 import Markup
+import Data.Maybe
+import Data.Word (Word8)
 
 main :: IO()
 main = (putStrLn . render) myhtml
@@ -96,3 +98,59 @@ odd2 n =
         else if n > 0
             then even2 (n-1)
             else even2 (n+1)
+
+safeHead :: [a] -> Maybe a
+safeHead [] = Nothing
+safeHead (x:_) = Just x
+
+data Brightness
+  = Dark
+  | Bright
+
+data EightColor
+  = Black
+  | Red
+  | Green
+  | Yellow
+  | Blue
+  | Magenta
+  | Cyan
+  | White
+
+data AnsiColor
+  = AnsiColor Brightness EightColor
+
+isBright :: AnsiColor -> Bool
+isBright (AnsiColor Bright _) = True
+isBright _ = False
+
+data Color
+  = RGB Word8 Word8 Word8 deriving Show
+
+ansiToUbuntu :: AnsiColor -> Color
+ansiToUbuntu (AnsiColor Dark Black) = RGB 1 1 1
+ansiToUbuntu (AnsiColor Dark Red) = RGB 222 56 43
+ansiToUbuntu (AnsiColor Dark Green) = RGB 57 181 74
+ansiToUbuntu (AnsiColor Dark Yellow) = RGB 255 199 6
+ansiToUbuntu (AnsiColor Dark Blue) = RGB 0 111 184
+ansiToUbuntu (AnsiColor Dark Magenta) = RGB 118 38 113
+ansiToUbuntu (AnsiColor Dark Cyan) = RGB 44 181 233
+ansiToUbuntu (AnsiColor Dark White) = RGB 204 204 204
+ansiToUbuntu (AnsiColor Bright Black) = RGB 128 128 128
+ansiToUbuntu (AnsiColor Bright Red) = RGB 255 0 0
+ansiToUbuntu (AnsiColor Bright Green) = RGB 0 255 0
+ansiToUbuntu (AnsiColor Bright Yellow) = RGB 255 255 0
+ansiToUbuntu (AnsiColor Bright Blue) = RGB 0 0 255
+ansiToUbuntu (AnsiColor Bright Magenta) = RGB 255 0 255
+ansiToUbuntu (AnsiColor Bright Cyan) = RGB 0 255 255
+ansiToUbuntu (AnsiColor Bright White) = RGB 255 255 255
+
+isEmpty :: [a] -> Bool
+isEmpty l =
+    case listToMaybe l of
+        Nothing -> True
+        Just _ -> False
+
+isEmpty2 :: [a] -> Bool
+isEmpty2 [] = True
+isEmpty2 _ = False
