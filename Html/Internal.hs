@@ -2,7 +2,12 @@ module Html.Internal where
 
 newtype Html = Html String
 
-newtype Structure = Structure String
+newtype Structure = Structure String deriving Show
+
+instance Semigroup Structure where
+  (<>) :: Structure -> Structure -> Structure
+  (<>) = append_
+
 
 type Title = String
 
