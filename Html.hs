@@ -3,7 +3,9 @@ module Html
     , Structure
     , Title
     , append_
+    , empty_
     , escape
+    , h_
     , h1_
     , html_
     , p_
