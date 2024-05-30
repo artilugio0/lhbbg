@@ -1,0 +1,46 @@
+cabal-version:      2.4
+
+name:               hs-blog
+version:            0.1.0.0
+synopsis:           A custom blog generator from markup files
+-- description:
+license:            MIT
+license-file:       LICENSE
+author:             artilugio0
+maintainer:         artilugio0
+category:           Web
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+
+common common-settings
+    default-language: Haskell2010
+    ghc-options:
+        -Wall
+
+library
+    import:           common-settings
+    hs-source-dirs:   src
+    build-depends:
+         base
+       , directory
+    exposed-modules:
+        HsBlog
+            HsBlog.Convert
+            HsBlog.Html
+                HsBlog.Html.Internal
+            HsBlog.Markup
+                 HsBlog.Markup.Internal
+    -- other-modules:
+
+executable hs-blog-gen
+    import:           common-settings
+    hs-source-dirs:   app
+    main-is:          Main.hs
+    build-depends:
+          base
+        , hs-blog
+    ghc-options:
+        -O
+
+    -- other-modules:
+    -- other-extensions:

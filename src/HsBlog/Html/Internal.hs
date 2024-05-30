@@ -1,4 +1,4 @@
-module Html.Internal where
+module HsBlog.Html.Internal where
 
 import Numeric.Natural
 
@@ -7,11 +7,9 @@ newtype Html = Html String
 newtype Structure = Structure String deriving Show
 
 instance Semigroup Structure where
-  (<>) :: Structure -> Structure -> Structure
   (<>) = append_
 
 instance Monoid Structure where
-  mempty :: Structure
   mempty = empty_
 
 

@@ -1,8 +1,8 @@
-module Markup
+module HsBlog.Markup
     ( Document
     , Structure(..)
     , parse
     )
     where
 
-import Markup.Internal
+import HsBlog.Markup.Internal

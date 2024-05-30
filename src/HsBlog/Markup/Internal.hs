@@ -1,4 +1,4 @@
-module Markup.Internal where
+module HsBlog.Markup.Internal where
 
 import Numeric.Natural
 import Data.Maybe
