@@ -1,16 +1,62 @@
-import Html
-import Markup
 import Data.Maybe
 import Data.Word (Word8)
+import System.Environment (getArgs)
+import System.Directory (doesFileExist)
 
-main :: IO()
-main = (putStrLn . render) myhtml
+import Convert
+import Html
+import Markup
+
+main :: IO ()
+main = do
+    args <- getArgs
+    case args of
+        [] -> getContents >>= putStrLn . process "un titulo"
+
+        [inFile, outFile] -> do
+           doesExist <- doesFileExist outFile
+           let
+               convertFile =
+                   (readFile inFile >>=
+                   (pure . process "un titulo") >>=
+                   (writeFile outFile))
+
+           if doesExist
+               then whenIO (confirm outFile) convertFile
+               else convertFile
+
+        otherwise -> putStrLn "Usage: runghc Main.hs [-- <input-file> <output-file>]"
+
+convertFile :: String -> String -> IO ()
+convertFile inFile outFile = do
+    content <- readFile inFile
+    let htmlContent = process "un titulo" content
+    writeFile outFile htmlContent
+
+whenIO:: IO Bool -> IO () -> IO ()
+whenIO = whenIOGeneric ()
+
+whenIOGeneric :: a -> IO Bool -> IO a -> IO a
+whenIOGeneric d condition action = do
+    ok <- condition
+    if ok
+        then action
+        else pure d
+
+confirm :: String -> IO Bool
+confirm fileName = do
+    putStrLn ("the file '" <> fileName <> "' already exist. Do you want to overwrite it? (y/n) [n]")
+    answer <- getLine
+    pure $ answer == "y"
+
+process :: String -> String -> String
+process title = render . Convert.convert title . Markup.parse
 
 myhtml :: Html
 myhtml =
     (html_
         "Aprendiendo Haskell <3"
-        (append_ 
+        (append_
             (h1_ "Aprendiendo Haskell en Twitch")
             (append_
                 (p_ "En este stream estamos aprendiendo los conceptos basicos de Haskell")
@@ -79,7 +125,7 @@ newDoc =
 
 replicate2 :: Int -> a -> [a]
 replicate2 n elem =
-    if n <= 0 
+    if n <= 0
         then []
         else elem : (replicate2 (n-1) elem)
 
