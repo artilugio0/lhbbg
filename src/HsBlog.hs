@@ -4,8 +4,6 @@ module HsBlog
     )
     where
 
-import Data.Maybe
-import Data.Word (Word8)
 import System.Environment (getArgs)
 import System.Directory (doesFileExist)
 
@@ -31,13 +29,7 @@ main = do
                then whenIO (confirm outFile) convertFile
                else convertFile
 
-        otherwise -> putStrLn "Usage: runghc Main.hs [-- <input-file> <output-file>]"
-
-convertFile :: String -> String -> IO ()
-convertFile inFile outFile = do
-    content <- readFile inFile
-    let htmlContent = process "un titulo" content
-    writeFile outFile htmlContent
+        _ -> putStrLn "Usage: runghc Main.hs [-- <input-file> <output-file>]"
 
 whenIO:: IO Bool -> IO () -> IO ()
 whenIO = whenIOGeneric ()

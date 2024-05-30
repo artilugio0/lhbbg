@@ -23,6 +23,9 @@ parseLines Nothing ("":ls) = parseLines Nothing ls
 parseLines Nothing (('*': ' ' :line):rest) = (Heading 1 line) : parseLines Nothing rest 
 parseLines (Just currentStructure) (('*': ' ' :line):rest) = currentStructure : (Heading 1 line) : parseLines Nothing rest 
 
+-- This should never match. Headings are never added to the context of parseLines
+parseLines (Just (Heading _ _)) _ = undefined
+
 parseLines Nothing (('-': ' ' :line):rest) = parseLines (Just (UnorderedList [line])) rest 
 parseLines (Just (UnorderedList items)) (('-': ' ' :line):rest) = parseLines (Just (UnorderedList (items ++ [line]))) rest 
 parseLines (Just (UnorderedList items)) rest = (UnorderedList items) : parseLines Nothing rest
