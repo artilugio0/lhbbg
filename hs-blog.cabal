@@ -22,6 +22,7 @@ library
     hs-source-dirs:   src
     build-depends:
          base
+       , optparse-applicative
        , directory
     exposed-modules:
         HsBlog
@@ -38,9 +39,11 @@ executable hs-blog-gen
     main-is:          Main.hs
     build-depends:
           base
+        , optparse-applicative
         , hs-blog
     ghc-options:
         -O
 
-    -- other-modules:
+   other-modules:
+        OptParse
     -- other-extensions:
