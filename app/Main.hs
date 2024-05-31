@@ -2,39 +2,46 @@ module Main where
 
 import HsBlog
 import OptParse
+import System.Directory (doesFileExist)
+import System.IO
+import System.Exit (exitFailure)
 
 main :: IO ()
 main = do
-    options <- OptParse.parse
-    input <-
-        case options of
-            ConvertSingle Stdin _ -> getContents
-            ConvertSingle (InputFile path) _ -> readFile path
-            _ -> undefined
+  options <- parse
+  case options of
+    ConvertDir input output ->
+      HsBlog.convertDirectory input output
 
-    let output = case options of
-            ConvertSingle _ Stdout -> putStrLn
-            ConvertSingle _ (OutputFile path) -> do
-              doesExist <- doesFileExist outFile
-              if doesExist
-                then whenIO confirm path
-                else
-            _ -> undefined
+    ConvertSingle input output -> do
+      (title, inputHandle) <-
+        case input of
+          Stdin ->
+            pure ("", stdin)
+          InputFile file ->
+            (,) file <$> openFile file ReadMode
 
-    output . process "un titulo" $ input
+      outputHandle <-
+        case output of
+          Stdout -> pure stdout
+          OutputFile file -> do
+            exists <- doesFileExist file
+            shouldOpenFile <-
+              if exists
+                then confirm file
+                else pure True
+            if shouldOpenFile
+              then
+                openFile file WriteMode
+              else
+                exitFailure
 
-whenIO:: IO Bool -> IO () -> IO ()
-whenIO = whenIOGeneric ()
+      HsBlog.convertSingle title inputHandle outputHandle
+      hClose inputHandle
+      hClose outputHandle
 
 confirm :: String -> IO Bool
 confirm fileName = do
     putStrLn ("the file '" <> fileName <> "' already exist. Do you want to overwrite it? (y/n) [n]")
     answer <- getLine
     pure $ answer == "y"
-
-whenIOGeneric :: a -> IO Bool -> IO a -> IO a
-whenIOGeneric d condition action = do
-    ok <- condition
-    if ok
-        then action
-        else pure d
